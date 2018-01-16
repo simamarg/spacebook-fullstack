@@ -28,14 +28,12 @@
     <script id="post-template" type="text/x-handlebars-template">
         <div class="post" data-id="{{_id}}"> {{text}} <a class="toggle-comments" href="#"> Comments </a>
             <button type="button" class="btn btn-danger remove-post">Remove Post</button>
-            <div>111</div>
+            <!-- <div>111</div> -->
             <div class="comments-container">
                 <ul class="comments-list"></ul>
-                <div class="add-comment-form">
-                    <input class="form-control name" type="text" placeholder="Name" />
-                    <input class="form-control comment" type="text" placeholder="Comment" />
-                    <button type="button" class="btn btn-sm btn-primary add-comment">Post Comment</button>
-                </div>
+                <input class="form-control name" type="text" placeholder="Name" />
+                <input class="form-control comment" type="text" placeholder="Comment" />
+                <button type="button" class="btn btn-sm btn-primary add-comment">Post Comment</button>
             </div>
         </div>
     </script>
