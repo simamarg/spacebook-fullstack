@@ -92,6 +92,40 @@ var SpacebookApp = function () {
         });
     };
 
+    // send request to server to update post in DB and then save the data from DB instead of the previous post
+    var updatePost = function (text, id) {
+        var url = 'posts/' + id;
+        $.ajax({
+            method: "PUT",
+            url: url,
+            data: {text: text},
+            success: function (data) {
+                posts[findIndexByID(posts, id)] = data;
+                _renderPosts();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    };
+
+    // send request to server to update comment of a post in DB and then save the data from DB to post's comments array
+    var updateComment = function (newComment, postId, commentId) {
+        var url = 'posts/' + postId + '/comments/' + commentId;
+        $.ajax({
+            method: "PUT",
+            url: url,
+            data: newComment,
+            success: function (data) {
+                posts[findIndexByID(posts, postId)].comments = data.comments;
+                _renderPosts();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    };
+
     function _renderPosts() {
         $posts.empty();
         var source = $('#post-template').html();
@@ -120,6 +154,8 @@ var SpacebookApp = function () {
         deletePost: deletePost,
         addComment: addComment,
         deleteComment: deleteComment,
+        updatePost: updatePost,
+        updateComment: updateComment,
         fetch: fetch
     };
 };
@@ -174,4 +210,28 @@ $posts.on('click', '.remove-comment', function () {
     var postId = $(this).closest('.post').data().id;
     var commentId = $(this).closest('.comment').data().id;
     app.deleteComment(postId, commentId);
+});
+
+$posts.on('click', '.toggle-update-post', function () {
+    var $clickedPost = $(this).closest('.post');
+    $clickedPost.find('.update-post-container').toggleClass('show');
+});
+
+$posts.on('click', '.update-post-button', function () {
+    var text = $(this).siblings('input').val();
+    var id = $(this).closest('.post').data().id;
+    app.updatePost(text, id);
+});
+
+$posts.on('click', '.toggle-update-comment', function () {
+    var $clickedComment = $(this).closest('.comment');
+    $clickedComment.find('.update-comment-container').toggleClass('show');
+});
+
+$posts.on('click', '.update-comment-button', function () {
+    var postId = $(this).closest('.post').data().id;
+    var commentId = $(this).closest('.comment').data().id;
+    var commentName = $(this).siblings('.update-comment-name').val();
+    var commentText = $(this).siblings('.update-comment-text').val();
+    app.updateComment({user: commentName, text: commentText}, postId, commentId);
 });

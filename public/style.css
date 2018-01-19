@@ -10,6 +10,6 @@
     margin: 5px 0 5px 10px;
 }
 
-.comments-container {
+.comments-container, .update-post-container, .update-comment-container {
     display: none;
 }

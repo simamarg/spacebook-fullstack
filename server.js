@@ -69,6 +69,24 @@ app.delete('/posts/:id/comments/:commentId', function(req, res) {
     });
 });
 
+// 6) to handle updating a post
+app.put('/posts/:id', function(req, res) {
+    Post.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true }, function(error, result) {
+        if (error) throw error;
+        res.send(result); // result = post object
+    });
+});
+
+// 7) to handle updating a comment
+app.put('/posts/:id/comments/:commentId', function(req, res) {
+    Post.findOneAndUpdate({ _id: req.params.id, "comments._id": req.params.commentId },
+                            { $set: { "comments.$": req.body } }, { new: true }, // comments.$ - position of comment by id
+                            function(error, result) {
+                                if (error) { return console.error(error); }
+                                res.send(result); // result = post object
+                            });
+});
+
 app.listen(8000, function () {
     console.log("what do you want from me! get me on 8000 ;-)");
 });

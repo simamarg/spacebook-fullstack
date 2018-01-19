@@ -27,8 +27,12 @@
     </div>
     <script id="post-template" type="text/x-handlebars-template">
         <div class="post" data-id="{{_id}}"> {{text}} <a class="toggle-comments" href="#"> Comments </a>
+            <button type="button" class="btn btn-success toggle-update-post">Update Post</button>
             <button type="button" class="btn btn-danger remove-post">Remove Post</button>
-            <!-- <div>111</div> -->
+            <div class="update-post-container">
+                <input class="form-control update-post-text" type="text" value="{{text}}" />
+                <button type="button" class="btn btn-sm btn-primary update-post-button">Update Post</button>
+            </div>
             <div class="comments-container">
                 <ul class="comments-list"></ul>
                 <input class="form-control name" type="text" placeholder="Name" />
@@ -39,7 +43,13 @@
     </script>
     <script id="comment-template" type="text/x-handlebars-template">
         <li class="comment" data-id="{{_id}}">{{text}} - {{user}}
+            <button type="button" class="btn btn-sm btn-success toggle-update-comment">Update Comment</button>
             <button type="button" class="btn btn-sm btn-danger remove-comment">Remove Comment</button>
+            <div class="update-comment-container">
+                <input class="form-control update-comment-name" type="text" value="{{user}}" />
+                <input class="form-control update-comment-text" type="text" value="{{text}}" />
+                <button type="button" class="btn btn-sm btn-primary update-comment-button">Update Comment</button>
+            </div>
         </li>
     </script>
     <script src="jquery/dist/jquery.js"></script>
