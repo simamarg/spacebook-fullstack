@@ -20,19 +20,38 @@ var SpacebookApp = function () {
         });
     };
 
-    function addPost(newPost) {
-        $.post('posts', { text: newPost }, function(data) { fetch(); });
+    function findIndexByID(array, id) {
+        return array.findIndex(function(element) {
+            return element._id === id;
+        });
     }
 
-    var removePost = function (id) {
+    // send request to server to add post to DB and then add the data from DB to posts array
+    function addPost(newPost) {
+        $.ajax({
+            method: "POST",
+            url: 'posts',
+            data: {text: newPost},
+            success: function (data) {
+                posts.push(data);
+                _renderPosts();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    }
+
+    // send request to server to delete post from DB and then delete it from posts array
+    var deletePost = function (id) {
         var url = 'posts/' + id;
-        console.log(url);
         $.ajax({
             method: "DELETE",
             url: url,
             success: function (data) {
-                console.log(data);
-                fetch();
+                var index = findIndexByID(posts, data._id);
+                posts.splice(index, 1);
+                _renderPosts();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus);
@@ -40,6 +59,7 @@ var SpacebookApp = function () {
         });
     };
 
+    // send request to server to add comment to a post in DB and then save the data from DB to post's comments array
     var addComment = function (newComment, postId) {
         var url = 'posts/' + postId + '/comments';
         $.ajax({
@@ -47,8 +67,8 @@ var SpacebookApp = function () {
             url: url,
             data: newComment,
             success: function (data) {
-                console.log(data);
-                fetch();
+                posts[findIndexByID(posts, postId)].comments = data.comments;
+                _renderPosts();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus);
@@ -56,16 +76,15 @@ var SpacebookApp = function () {
         });
     };
 
-
+    // send request to server to delete comment of a post in DB and then save the data from DB to post's comments array
     var deleteComment = function (postId, commentId) {
         var url = 'posts/' + postId + '/comments/' + commentId;
-        console.log(url);
         $.ajax({
             method: "DELETE",
             url: url,
             success: function (data) {
-                console.log(data);
-                fetch();
+                posts[findIndexByID(posts, postId)].comments = data.comments;
+                _renderPosts();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(textStatus);
@@ -98,7 +117,7 @@ var SpacebookApp = function () {
 
     return {
         addPost: addPost,
-        removePost: removePost,
+        deletePost: deletePost,
         addComment: addComment,
         deleteComment: deleteComment,
         fetch: fetch
@@ -125,7 +144,7 @@ var $posts = $(".posts");
 
 $posts.on('click', '.remove-post', function () {
     var id = $(this).closest('.post').data().id;
-    app.removePost(id);
+    app.deletePost(id);
 });
 
 $posts.on('click', '.toggle-comments', function () {
