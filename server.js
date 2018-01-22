@@ -1,8 +1,10 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var fs = require('fs');
+var multer = require('multer')
 
-mongoose.connect('mongodb://localhost/spacebookDB', {useMongoClient: true}, function () {
+mongoose.connect(process.env.CONNECTION_STRING || 'mongodb://localhost/spacebookDB', {useMongoClient: true}, function () {
     console.log("DB connection established!!!");
 })
 
@@ -13,6 +15,9 @@ app.use(express.static('public'));
 app.use(express.static('node_modules'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// multer usage
+// app.use(multer({ dest: './uploads/', rename: function (fieldName, fileName) { return filename; } }));
 
 // Dummy post created to initiate the spacebookDB
 // var dummyPost = new Post({
@@ -33,6 +38,8 @@ app.get('/posts', function(req, res) {
 // 2) to handle adding a post
 app.post('/posts', function(req, res) {
     var newPost = new Post(req.body);
+    newPost.img.data = fs.readFileSync(req.file //s.userPhoto.path);
+    newPost.img.contentType = 'image/png';
     newPost.comments = [];
     newPost.save(function(error, result) {
         if (error) { return console.error(error); }
@@ -87,6 +94,6 @@ app.put('/posts/:id/comments/:commentId', function(req, res) {
                             });
 });
 
-app.listen(8000, function () {
+app.listen(process.env.PORT || 8000, function () {
     console.log("what do you want from me! get me on 8000 ;-)");
 });

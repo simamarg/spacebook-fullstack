@@ -7,7 +7,8 @@ var commentSchema = new mongoose.Schema({
 
 var postSchema = new mongoose.Schema({
     text: String,
-    comments: [commentSchema]
+    comments: [commentSchema],
+    // img: { data: Buffer, contentType: String }
 });
 
 var Post = mongoose.model('post', postSchema);
